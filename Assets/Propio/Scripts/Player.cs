@@ -91,18 +91,16 @@ public class Player : MonoBehaviour
             //Sirve para cuando te tiras de edges.
             animator.SetBool("HasJumped", true);
             hasJumped = true;
-        } else
-        {
-            animator.SetBool("HasJumped", false);
-            hasJumped = false;
-        }
+        } 
 
         if (!wasOnGround && onGround && hasJumped)
         {
             StartCoroutine(JumpSqueeze(1.2f, 0.8f, 0.05f));
             animator.SetBool("HasJumped", false);
             hasJumped = false;
+            animator.SetTrigger("Landed");
         }
+
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         if(Input.GetButtonDown("Jump"))
         {
