@@ -189,6 +189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 50
   direction: {x: 0, y: 0}
+  movementForceInAir: 15
   jumpForce: 10
   jumpDelay: 0.25
   verticalSpeed: 0
@@ -196,6 +197,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 512
   characterHolder: {fileID: 4608083399409912219}
   maxSpeed: 5
   linearDrag: 4
@@ -207,6 +211,10 @@ MonoBehaviour:
   weapon: {fileID: 0}
   isOnSlope: 0
   canWalkOnSlope: 0
+  wallCheckDistance: 0.65
+  wallSlideSpeed: 2.5
+  wallJumpDirection: {x: 0.6, y: 0.8}
+  wallJumpForce: 15
 --- !u!68 &4608083399278288465
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -216,7 +224,7 @@ EdgeCollider2D:
   m_GameObject: {fileID: 4608083399278288471}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f388a99f6ac3794438d7aea06ea64cc7, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0

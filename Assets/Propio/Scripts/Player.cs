@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     public float speed = 10f;
     public Vector2 direction;
     private bool facingLeft = true;
+    private int facingDirection = -1;
+    public float movementForceInAir;
 
     [Header("Vertical Movement")]
     public float jumpForce = 15f;
@@ -23,6 +25,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rigidBody;
     public Animator animator;
     public LayerMask groundLayer;
+    public LayerMask wallLayer;
     public GameObject characterHolder;
 
     [Header("Physics")]
@@ -56,6 +59,14 @@ public class Player : MonoBehaviour
     private Vector2 newVelocity;
 
 
+    //WALL RELATED
+    private bool isTouchingWall;
+    public float wallCheckDistance;
+    private bool isWallSliding;
+    public float wallSlideSpeed;
+    public Vector2 wallJumpDirection;
+    public float wallJumpForce;
+
     static public Player getInstance() 
     {
           return instance;
@@ -69,6 +80,7 @@ public class Player : MonoBehaviour
 
         cc = GetComponent<EdgeCollider2D>();
         capsuleColliderSize.y = 1.7f;
+        wallJumpDirection.Normalize();
     }
 
     private void Awake()
@@ -105,6 +117,39 @@ public class Player : MonoBehaviour
         if(Input.GetButtonDown("Jump"))
         {
             jumpTimer = Time.time + jumpDelay;
+            CheckForWallJump();
+        }
+        CheckForWalls();
+        CheckIfWallSliding();
+    }
+
+    private void CheckForWalls()
+    {
+        isTouchingWall = Physics2D.Raycast(transform.position, -transform.right, wallCheckDistance, wallLayer);
+    }
+
+
+    private void CheckIfWallSliding()
+    {
+        if (isTouchingWall && !onGround && rigidBody.velocity.y <= 0) 
+        {
+            isWallSliding = true;
+            animator.SetBool("isWallSliding", true);
+        }
+        else
+        {
+            isWallSliding = false;
+            animator.SetBool("isWallSliding", false);
+        }
+    }
+
+    private void CheckForWallJump()
+    {
+        if ((isWallSliding || isTouchingWall))
+        {
+            Vector2 forceToAdd = new Vector2(wallJumpForce * wallJumpDirection.x * -facingDirection, wallJumpForce * wallJumpDirection.y);
+            rigidBody.AddForce(forceToAdd, ForceMode2D.Impulse);
+            Flip();
         }
     }
 
@@ -123,32 +168,37 @@ public class Player : MonoBehaviour
 
     private void MoveCharacter(float horizontal)
     {
+        if (!isWallSliding)
+        {
+            if ((onGround && !isOnSlope))
+            {
+                //rigidBody.AddForce(Vector2.right * horizontal * speed);
+                newVelocity.Set(speed * horizontal, 0.0f);
+                rigidBody.velocity = newVelocity;
+            }
+            else if (onGround && isOnSlope && canWalkOnSlope)
+            {
+                newVelocity.Set(speed * slopeNormalPerpendicular.x * -horizontal, 7 * slopeNormalPerpendicular.y * -horizontal);
+                rigidBody.velocity = newVelocity;
+            }
+            else if (!onGround)
+            {
+                //newVelocity.Set(speed * horizontal, rigidBody.velocity.y);
+                //rigidBody.velocity = newVelocity;
+                Vector2 forceToAdd = new Vector2(movementForceInAir * horizontal, 0);
+                rigidBody.AddForce(forceToAdd);
+            }
 
-        if ((onGround && !isOnSlope))
-        {
-            //rigidBody.AddForce(Vector2.right * horizontal * speed);
-            newVelocity.Set(speed * horizontal, 0.0f);
-            rigidBody.velocity = newVelocity;
+            if ((horizontal > 0 && facingLeft) || (horizontal < 0 && !facingLeft))
+            {
+                Flip();
+            }
         }
-        else if (onGround && isOnSlope && canWalkOnSlope)
-        {
-            newVelocity.Set(speed * slopeNormalPerpendicular.x * -horizontal, 7 * slopeNormalPerpendicular.y * -horizontal);
-            rigidBody.velocity = newVelocity;
-        }
-        else if (!onGround)
-        {
-            newVelocity.Set(speed * horizontal, rigidBody.velocity.y);
-            rigidBody.velocity = newVelocity;
-        }
-
         animator.SetFloat("Horizontal", Mathf.Abs(rigidBody.velocity.x));
         animator.SetFloat("Vertical", rigidBody.velocity.y);
         
 
-        if ((horizontal > 0 && facingLeft) || (horizontal < 0 && !facingLeft))
-        {
-            Flip();
-        }
+        
         if (Mathf.Abs(rigidBody.velocity.x) > maxSpeed)
         {
             rigidBody.velocity = new Vector2 (Mathf.Sign(rigidBody.velocity.x) * maxSpeed, rigidBody.velocity.y);
@@ -268,6 +318,13 @@ public class Player : MonoBehaviour
                 rigidBody.gravityScale = gravity * (fallMultiplier / 1.5f);
             }
         }
+        if (isWallSliding)
+        {
+            if (rigidBody.velocity.y < -wallSlideSpeed)
+            {
+                rigidBody.velocity = new Vector2(rigidBody.velocity.x, -wallSlideSpeed);
+            }
+        }
     }
 
     IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds)
@@ -294,6 +351,7 @@ public class Player : MonoBehaviour
     private void Flip()
     {
         facingLeft = !facingLeft;
+        facingDirection *= -1;
         transform.Rotate(new Vector3(0, 180, 0));
     }
 
