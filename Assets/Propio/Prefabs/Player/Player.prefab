@@ -204,17 +204,17 @@ MonoBehaviour:
   maxSpeed: 5
   linearDrag: 4
   gravity: 1
-  fallMultiplier: 5
+  fallMultiplier: 7.5
   onGround: 0
   groundLength: 1.15
   colliderOffset: {x: 0.33, y: 0, z: 0}
   weapon: {fileID: 0}
   isOnSlope: 0
   canWalkOnSlope: 0
-  wallCheckDistance: 0.65
+  wallCheckDistance: 0.75
   wallSlideSpeed: 2.5
-  wallJumpDirection: {x: 0.6, y: 0.8}
-  wallJumpForce: 15
+  wallJumpDirection: {x: 0.6, y: 0.7}
+  wallJumpForce: 17
 --- !u!68 &4608083399278288465
 EdgeCollider2D:
   m_ObjectHideFlags: 0

@@ -97,7 +97,9 @@ public class Player : MonoBehaviour
         onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
                    Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
 
-        if (!Physics2D.Raycast(transform.position, Vector2.down, groundLength + 0.75f, groundLayer))
+        if (!Physics2D.Raycast(transform.position, Vector2.down, groundLength + 0.75f, groundLayer) &&
+            !Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength + 0.75f, groundLayer) &&
+            !Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength + 0.75f, groundLayer))
         {
             //Si aunque no hayas saltado, no detecta suelo, activa la animación falling.
             //Sirve para cuando te tiras de edges.
