@@ -26,7 +26,6 @@ public class Player : MonoBehaviour
     public Animator animator;
     public LayerMask groundLayer;
     public LayerMask wallLayer;
-    public GameObject characterHolder;
 
     [Header("Physics")]
     public float maxSpeed = 5f;
@@ -41,6 +40,9 @@ public class Player : MonoBehaviour
 
     private static Player instance;
     public Weapon weapon;
+
+
+    private bool canFlip = true;
 
     //SLOPES
     private EdgeCollider2D cc;
@@ -337,26 +339,43 @@ public class Player : MonoBehaviour
         while (t <= 1.0)
         {
             t += Time.deltaTime / seconds;
-            characterHolder.transform.localScale = Vector3.Lerp(originalSize, newSize, t);
+            transform.localScale = Vector3.Lerp(originalSize, newSize, t);
             yield return null;
         }
         t = 0f;
         while (t <= 1.0)
         {
             t += Time.deltaTime / seconds;
-            characterHolder.transform.localScale = Vector3.Lerp(newSize, originalSize, t);
+            transform.localScale = Vector3.Lerp(newSize, originalSize, t);
             yield return null;
         }
 
     }
 
-    private void Flip()
+    public void DisableFlip()
     {
-        facingLeft = !facingLeft;
-        facingDirection *= -1;
-        transform.Rotate(new Vector3(0, 180, 0));
+        canFlip = false;
     }
 
+    public void EnableFlip()
+    {
+        canFlip = true;
+    }
+
+    private void Flip()
+    {
+        if (canFlip)
+        {
+            facingLeft = !facingLeft;
+            facingDirection *= -1;
+            transform.Rotate(new Vector3(0, 180, 0));
+        }
+    }
+
+    public int GetFacingDirection()
+    {
+        return facingDirection;
+    }
 
     private void OnDrawGizmos()
     {

@@ -66,9 +66,11 @@
     <Compile Include="Assets\Propio\Scripts\AmmoDisplay.cs" />
     <Compile Include="Assets\Propio\Scripts\Bullet.cs" />
     <Compile Include="Assets\Propio\Scripts\CameraFollow.cs" />
+    <Compile Include="Assets\Propio\Scripts\CombatDummyController.cs" />
     <Compile Include="Assets\Propio\Scripts\Enemy.cs" />
+    <Compile Include="Assets\Propio\Scripts\ParticleController.cs" />
     <Compile Include="Assets\Propio\Scripts\Player.cs" />
-    <Compile Include="Assets\Propio\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Propio\Scripts\PlayerCombatController.cs" />
     <Compile Include="Assets\Propio\Scripts\Weapon.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Usuario/Desktop/TFG/Código/TFG/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

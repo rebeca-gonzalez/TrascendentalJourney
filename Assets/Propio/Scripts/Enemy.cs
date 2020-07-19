@@ -44,7 +44,7 @@ public class Enemy : MonoBehaviour
         facingDirection *= -1;
         transform.Rotate(new Vector3(0, 180, 0));
     }
-    public void TakeDamage(int damage)
+    public void Damage(int damage)
     {
         health -= damage;
         if (health <= 0)
