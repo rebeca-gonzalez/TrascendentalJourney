@@ -5,6 +5,13 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Spikes
+  - Checkpoint
+  - DialogTrigger
+  - Platform
+  - Ground
+  - Key
+  - Door
   layers:
   - Default
   - TransparentFX
@@ -53,4 +60,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 1841702265
+    locked: 0
+  - name: Foreground
+    uniqueID: 4094494053
     locked: 0
