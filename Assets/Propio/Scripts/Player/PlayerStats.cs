@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [SerializeField]
-    private float maxHealth;
+    public float maxHealth;
 
     [SerializeField]
     private GameObject chunkParticles;
@@ -35,6 +34,6 @@ public class PlayerStats : MonoBehaviour
     {
         Instantiate(chunkParticles, transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
         GM.Respawn();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

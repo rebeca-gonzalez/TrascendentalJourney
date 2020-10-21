@@ -12,6 +12,8 @@ TagManager:
   - Ground
   - Key
   - Door
+  - OOB
+  - Trophy
   layers:
   - Default
   - TransparentFX

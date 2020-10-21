@@ -6,6 +6,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public Vector3 respawnPoint;
+    public int level = 0;
+    public bool hasKey = false;
 
     [SerializeField]
     private GameObject player;
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour
     public event Action respawnEnemies;
 
     private static GameManager instance;
+    private Player p;
 
     public void RespawnEnemies()
     {
@@ -43,14 +46,16 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         cf = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+        p = Player.getInstance();
     }
 
     private void Update()
     {
+        //Debug.Log(1.0f / Time.deltaTime);
         CheckRespawn();
         if (Input.GetKeyDown("r")) RespawnEnemies();
-
     }
+
 
     public void Respawn()
     {
@@ -62,11 +67,15 @@ public class GameManager : MonoBehaviour
     {
         if (Time.time >= respawnTimeStart + respawnTime && respawn)
         {
+            Debug.Log("AAAAAAAAA");
+            Debug.Log(respawnPoint);
             RespawnEnemies();
             respawn = false;
-            var temp = Instantiate(player, respawnPoint, Quaternion.identity);
-            cf.followObject = temp;
-            cf.rb = cf.followObject.GetComponent<Rigidbody2D>();
+            //var temp = Instantiate(player, respawnPoint, Quaternion.identity);
+            p.gameObject.SetActive(true);
+            p.GoToCheckpoint();
+            //cf.followObject = temp;
+            //cf.rb = cf.followObject.GetComponent<Rigidbody2D>();
 
         }
     }

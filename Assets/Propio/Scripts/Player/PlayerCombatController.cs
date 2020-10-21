@@ -29,12 +29,19 @@ public class PlayerCombatController : MonoBehaviour
     private Player p;
     private PlayerStats ps;
 
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
+    public float flashTime;
+
     private void Start()
     {
         anim = transform.GetComponentInChildren<Animator>();
         anim.SetBool("canAttack", combatEnabled);
         p = Player.getInstance();
         ps = GetComponent<PlayerStats>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
     }
 
     private void Update()
@@ -46,6 +53,7 @@ public class PlayerCombatController : MonoBehaviour
 
     private void Damage(AttackDetails attackDetails)
     {
+        FlashInRed();
         int direction;
         ps.ChangeHealth(-attackDetails.damageAmount);
         if (attackDetails.position.x >= transform.position.x)
@@ -58,6 +66,22 @@ public class PlayerCombatController : MonoBehaviour
         }
         p.Knockback(direction);
     }
+
+    private void FlashInRed()
+    {
+        Color c = new Color(1f, 0.5f, 0.5f, 1f);
+        spriteRenderer.color = c;
+        Time.timeScale = 0.75f;
+        Invoke("ResetColor", flashTime);
+
+    }
+
+    void ResetColor()
+    {
+        spriteRenderer.color = originalColor;
+        Time.timeScale = 1f;
+    }
+
 
     private void CheckCombatInput()
     {
@@ -90,7 +114,8 @@ public class PlayerCombatController : MonoBehaviour
 
     public void CheckAttackHitBox()
     {
-        Collider2D[] detectedObjects = Physics2D.OverlapCircleAll(attack1HitBoxPos.position, attack1Radius, whatIsDamageable);
+        Collider2D[] detectedObjects = 
+            Physics2D.OverlapCircleAll(attack1HitBoxPos.position, attack1Radius, whatIsDamageable);
 
         attackDetails.damageAmount = attack1Damage;
         attackDetails.position = transform.position;

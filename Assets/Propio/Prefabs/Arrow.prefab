@@ -130,7 +130,7 @@ MonoBehaviour:
     m_Bits: 512
   damagePosition: {fileID: 1683431402018265041}
   damageRadius: 0.17
-  timeToDespawn: 1.5
+  timeToDespawn: 0.75
 --- !u!1 &8827861158660859330
 GameObject:
   m_ObjectHideFlags: 0

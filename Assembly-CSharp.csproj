@@ -63,16 +63,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\AlternatingBlock1.cs" />
-    <Compile Include="Assets\AlternatingBlock2.cs" />
-    <Compile Include="Assets\ArrowDispenser.cs" />
-    <Compile Include="Assets\Door.cs" />
-    <Compile Include="Assets\FallingBlock.cs" />
-    <Compile Include="Assets\Platform.cs" />
     <Compile Include="Assets\Propio\Scripts\AnimationToStateMachine.cs" />
+    <Compile Include="Assets\Propio\Scripts\Blocks\AlternatingBlock1.cs" />
+    <Compile Include="Assets\Propio\Scripts\Blocks\AlternatingBlock2.cs" />
+    <Compile Include="Assets\Propio\Scripts\Blocks\ArrowDispenser.cs" />
+    <Compile Include="Assets\Propio\Scripts\Blocks\Door.cs" />
+    <Compile Include="Assets\Propio\Scripts\Blocks\FallingBlock.cs" />
+    <Compile Include="Assets\Propio\Scripts\Blocks\Stalactite.cs" />
     <Compile Include="Assets\Propio\Scripts\Camera\CameraFollow.cs" />
     <Compile Include="Assets\Propio\Scripts\Camera\Parallax.cs" />
-    <Compile Include="Assets\Propio\Scripts\Canvas\AmmoDisplay.cs" />
+    <Compile Include="Assets\Propio\Scripts\Canvas\MainMenu.cs" />
+    <Compile Include="Assets\Propio\Scripts\Canvas\PauseMenu.cs" />
     <Compile Include="Assets\Propio\Scripts\Enemies\CombatDummyController.cs" />
     <Compile Include="Assets\Propio\Scripts\Enemies\Enemy.cs" />
     <Compile Include="Assets\Propio\Scripts\Enemies\Enemy0Controller.cs" />
@@ -133,9 +134,7 @@
     <Compile Include="Assets\Propio\Scripts\Structs\AttackDetails.cs" />
     <Compile Include="Assets\Propio\Scripts\UI\Dialog.cs" />
     <Compile Include="Assets\Propio\Scripts\UI\HealthBar.cs" />
-    <Compile Include="Assets\Stalactite.cs" />
     <Compile Include="Assets\animationEvents.cs" />
-    <Compile Include="Assets\chara.cs" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />

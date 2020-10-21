@@ -51,6 +51,7 @@ public class Entity : MonoBehaviour
     {
         if (stateMachine==null) Debug.LogError("Entity does not have stateMachine");
         if (stateMachine.currentState == null) Debug.LogError("Entity's stateMachine does not have currentState");
+
         stateMachine.currentState.LogicUpdate();
         anim.SetFloat("yVelocity", rb.velocity.y);
         if (Time.time >= lastDamageTime + entityData.stunRecoveryTime)
@@ -138,7 +139,7 @@ public class Entity : MonoBehaviour
 
         if (currentHP > 0) isDead = false;
         else isDead = true;
-
+        
         DamageHop(entityData.damageHopVelocity);
     }
 

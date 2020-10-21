@@ -19,4 +19,8 @@ public class animationEvents : MonoBehaviour
     {
         pcc.FinishAttack();
     }
+    public void MakeSound()
+    {
+        GetComponent<AudioSource>().Play();
+    }
 }

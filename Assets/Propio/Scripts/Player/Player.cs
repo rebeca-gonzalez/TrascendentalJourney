@@ -44,20 +44,7 @@ public class Player : MonoBehaviour
 
     private bool canFlip = true;
 
-    //SLOPES
-    private CapsuleCollider2D cc;
-    private Vector2 capsuleColliderSize;
 
-    private float slopeCheckDistance = 1.5f;
-    private float maxSlopeAngle = 70f;
-    private float slopeDownAngle;
-    private float slopeSideAngle;
-    private float lastSlopeAngle;
-
-    public bool isOnSlope;
-    public bool canWalkOnSlope;
-
-    private Vector2 slopeNormalPerpendicular;
     private Vector2 newVelocity;
 
 
@@ -90,6 +77,13 @@ public class Player : MonoBehaviour
     public Transform groundCheck;
     public float groundCheckRadius;
 
+    private Vector3 respawnPoint;
+
+
+    public int level;
+    public Vector3[] levelPos;
+
+
     static public Player getInstance() 
     {
           return instance;
@@ -103,11 +97,16 @@ public class Player : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         pcc = GetComponent <PlayerCombatController>();
         ps = GetComponent<PlayerStats>();
-        cc = GetComponent<CapsuleCollider2D>();
-        capsuleColliderSize.y = 1.7f;
         wallJumpDirection.Normalize();
         GM = GameManager.getInstance();
         dialog = GameObject.Find("Dialog Manager").GetComponent<Dialog>();
+        level = GM.level;
+        hasKey = GM.hasKey;
+
+        if (MainMenu.loadGame == true)
+        {
+            LoadPlayer();
+        }
     }
 
     private void Awake()
@@ -116,42 +115,10 @@ public class Player : MonoBehaviour
             instance = this;
     }
 
-
-    // Update is called once per frame
     void Update()
     {
-        bool wasOnGround = onGround;
-        onGround = //Physics2D.OverlapCapsule(groundCheck.position, new Vector2(cc.size.x - 0.1f, cc.size.y), CapsuleDirection2D.Vertical, 0f, groundLayer);
-        Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        /*Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
-        Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer) ||
-        Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, wallLayer) ||
-        Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, wallLayer);*/
         if (Input.GetKeyDown("k")) SavePlayer();
         if (Input.GetKeyDown("l")) LoadPlayer();
-
-
-        if //(!onGround)
-            (!Physics2D.Raycast(transform.position, Vector2.down, groundLength + 0.75f, groundLayer) &&
-            !Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength + 0.75f, groundLayer) &&
-            !Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength + 0.75f, groundLayer))
-        {
-            //Si aunque no hayas saltado, no detecta suelo, activa la animación falling.
-            //Sirve para cuando te tiras de edges.
-            
-            animator.SetBool("HasJumped", true);
-            hasJumped = true;
-        } 
-
-        if (!wasOnGround && onGround && hasJumped)
-        {
-            StartCoroutine(JumpSqueeze(1.2f, 0.8f, 0.05f));
-            animator.SetBool("HasJumped", false);
-            hasJumped = false;
-            animator.SetTrigger("Landed");
-            //transform.position = new Vector3(transform.position.x, Mathf.Ceil(transform.position.y));
-        }
 
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         if(Input.GetButtonDown("Jump"))
@@ -197,32 +164,48 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-            //SlopeCheck();
-            MoveCharacter(direction.x);
+        bool wasOnGround = onGround;
+
+        onGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        if (!Physics2D.Raycast(transform.position, Vector2.down, groundLength + 0.75f, groundLayer) &&
+            !Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength + 0.75f, groundLayer) &&
+            !Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength + 0.75f, groundLayer))
+        {
+            //Si aunque no hayas saltado, no detecta suelo, activa la animación falling.
+            //Sirve para cuando te tiras de edges.
+
+            animator.SetBool("HasJumped", true);
+            hasJumped = true;
+        }
+
+        if (!wasOnGround && onGround && hasJumped)
+        {
+            StartCoroutine(JumpSqueeze(1.2f, 0.8f, 0.05f));
+            animator.SetBool("HasJumped", false);
+            hasJumped = false;
+            animator.SetTrigger("Landed");
+        }
+
+        MoveCharacter(direction.x);
             if (jumpTimer > Time.time && onGround)
             {
                 Jump();
             }
 
-            ModifyPhysics();
-            verticalSpeed = rigidBody.velocity.y;
+        ModifyPhysics();
+        verticalSpeed = rigidBody.velocity.y;
     }
 
     private void MoveCharacter(float horizontal)
     {
         if (!isWallSliding)
         {
-            if ((onGround && !isOnSlope) && !knockback)
+            if ((onGround) && !knockback)
             {
-                //rigidBody.AddForce(Vector2.right * horizontal * speed);
                 newVelocity.Set(speed * horizontal, 0.0f);
                 rigidBody.velocity = newVelocity;
             }
-            /*else if (onGround && isOnSlope && canWalkOnSlope && !knockback)
-            {
-                newVelocity.Set(speed * slopeNormalPerpendicular.x * -horizontal, 7 * slopeNormalPerpendicular.y * -horizontal);
-                rigidBody.velocity = newVelocity;
-            }*/
+            
             else if (!onGround && !knockback)
             {
                 Vector2 forceToAdd = new Vector2(movementForceInAir * horizontal, 0);
@@ -248,89 +231,10 @@ public class Player : MonoBehaviour
     private void Jump()
     {
         animator.SetBool("HasJumped", true);
-        //transform.position = new Vector3(transform.position.x, Mathf.Ceil(transform.position.y)+2);
         hasJumped = true;
-        //rigidBody.velocity = new Vector2(rigidBody.velocity.x, 0);
-        //rigidBody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpForce);
         jumpTimer = 0;
         StartCoroutine(JumpSqueeze(0.8f, 1.2f, 0.1f));
-    }
-
-    private void SlopeCheck()
-    {
-        Vector2 checkPos = transform.position - (Vector3)(new Vector2(0.0f, capsuleColliderSize.y / 2));
-
-        SlopeCheckHorizontal(checkPos);
-        SlopeCheckVertical(checkPos);
-    }
-
-    private void SlopeCheckHorizontal(Vector2 checkPos)
-    {
-        RaycastHit2D slopeHitFront = Physics2D.Raycast(checkPos, transform.right, slopeCheckDistance, groundLayer);
-        RaycastHit2D slopeHitBack = Physics2D.Raycast(checkPos, -transform.right, slopeCheckDistance, groundLayer);
-
-        if (slopeHitFront)
-        {
-            isOnSlope = true;
-
-            slopeSideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
-
-        }
-        else if (slopeHitBack)
-        {
-            isOnSlope = true;
-
-            slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
-        }
-        else
-        {
-            slopeSideAngle = 0.0f;
-            isOnSlope = false;
-        }
-
-    }
-
-    private void SlopeCheckVertical(Vector2 checkPos)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, slopeCheckDistance, groundLayer);
-
-        if (hit)
-        {
-
-            slopeNormalPerpendicular = Vector2.Perpendicular(hit.normal).normalized;
-
-            slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
-
-            if (slopeDownAngle != lastSlopeAngle)
-            {
-                isOnSlope = true;
-            }
-
-            lastSlopeAngle = slopeDownAngle;
-
-            Debug.DrawRay(hit.point, slopeNormalPerpendicular, Color.blue);
-            Debug.DrawRay(hit.point, hit.normal, Color.green);
-
-        }
-
-        if (slopeDownAngle > maxSlopeAngle || slopeSideAngle > maxSlopeAngle)
-        {
-            canWalkOnSlope = false;
-        }
-        else
-        {
-            canWalkOnSlope = true;
-        }
-
-        if (isOnSlope && canWalkOnSlope && direction.x == 0.0f)
-        {
-            rigidBody.drag = 9999;
-        }
-        else
-        {
-            rigidBody.drag = 0;
-        }
     }
 
     private void ModifyPhysics()
@@ -439,6 +343,7 @@ public class Player : MonoBehaviour
         else if (collision.tag == "Checkpoint")
         {
             GM.respawnPoint = transform.position;
+            respawnPoint = transform.position;
         }
         else if (collision.tag == "DialogTrigger")
         {
@@ -448,16 +353,32 @@ public class Player : MonoBehaviour
         else if (collision.tag == "Key")
         {
             hasKey = true;
+            GM.hasKey = true;
             Destroy(collision.gameObject);
+        }
+        else if (collision.tag == "OOB")
+        {
+            GoToCheckpoint();
+            
+        }
+        else if (collision.tag == "Trophy")
+        {
+            Invoke("ChangeLevel", 1f);
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void GoToCheckpoint()
     {
-        if (collision.gameObject.tag == "Key")
-        {
-            Debug.Log("Puerrta");
-        }
+        transform.position = Vector3.Lerp(transform.position, respawnPoint, 1);
+        ps.ChangeHealth(ps.maxHealth - ps.currentHealth);
+        GM.RespawnEnemies();
+    }
+
+    public void ChangeLevel()
+    {
+        level++;
+        GM.level = level;
+        transform.position = levelPos[level];
     }
 
     public void SavePlayer()
