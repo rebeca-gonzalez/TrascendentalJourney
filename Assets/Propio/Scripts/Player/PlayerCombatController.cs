@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class PlayerCombatController : MonoBehaviour
 {
-    [SerializeField]
-    private bool combatEnabled;
-
+    
     [SerializeField]
     private float inputTimer, attack1Radius, attack1Damage, stunDamageAmount = 1f;
 
@@ -37,7 +35,6 @@ public class PlayerCombatController : MonoBehaviour
     private void Start()
     {
         anim = transform.GetComponentInChildren<Animator>();
-        anim.SetBool("canAttack", combatEnabled);
         p = Player.getInstance();
         ps = GetComponent<PlayerStats>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -87,11 +84,10 @@ public class PlayerCombatController : MonoBehaviour
     {
         if (Time.timeScale != 0)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (gameObject.activeSelf)
             {
-                if (combatEnabled)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    //Atempt Combat
                     gotInput = true;
                     lastInputTime = Time.time;
                 }

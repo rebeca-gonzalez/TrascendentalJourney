@@ -407,7 +407,7 @@ MonoBehaviour:
   ledgeCheck: {fileID: 457012278448068040}
   playerCheck: {fileID: 457012277035258807}
   groundCheck: {fileID: 457012277499695340}
-  key: {fileID: 0}
+  key: {fileID: 6961423920016578786, guid: 1183e799b251f8343a1faa10316b8848, type: 3}
   hasKey: 0
   moveStateData: {fileID: 11400000, guid: 85c268bca490fb84e89b87145c4cf20b, type: 2}
   idleStateData: {fileID: 11400000, guid: 13741423e4f31c045a43f830c8622607, type: 2}

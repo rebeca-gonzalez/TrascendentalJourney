@@ -119,6 +119,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown("k")) SavePlayer();
         if (Input.GetKeyDown("l")) LoadPlayer();
+        if (Input.GetKeyDown("c")) ChangeLevel();
 
         direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         if(Input.GetButtonDown("Jump"))
@@ -364,6 +365,7 @@ public class Player : MonoBehaviour
         else if (collision.tag == "Trophy")
         {
             Invoke("ChangeLevel", 1f);
+            Destroy(collision.gameObject);
         }
     }
 

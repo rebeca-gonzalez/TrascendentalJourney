@@ -34,6 +34,7 @@ public class PlayerStats : MonoBehaviour
     {
         Instantiate(chunkParticles, transform.position, Quaternion.Euler(0.0f, 0.0f, Random.Range(0.0f, 360.0f)));
         GM.Respawn();
+        GetComponent<PlayerCombatController>().FinishAttack();
         gameObject.SetActive(false);
     }
 }

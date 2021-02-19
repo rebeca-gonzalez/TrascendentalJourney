@@ -8,7 +8,7 @@ public class Stalactite : MonoBehaviour
     private bool playerDetected, hasAlreadyDetectedPlayer, firstDetected;
     private float playerDetectedTime;
     private BoxCollider2D bc;
-    private AttackDetails a;
+    private AttackDetails attackDetails;
     private Vector3 initialPosition, pos;
 
 
@@ -33,7 +33,7 @@ public class Stalactite : MonoBehaviour
         p = Player.getInstance();
         bc = GetComponent<BoxCollider2D>();
         hasAlreadyDetectedPlayer = false;
-        a.damageAmount = 999f;
+        attackDetails.damageAmount = 999f;
         initialPosition = transform.position;
         pos = transform.position + Vector3.down * rayLength;
         firstDetected = true;
@@ -51,7 +51,7 @@ public class Stalactite : MonoBehaviour
             Collider2D[] detectedObjects = Physics2D.OverlapCircleAll(transform.position - offset, damageRadius, playerLayer);
             foreach (Collider2D col in detectedObjects)
             {
-                col.transform.SendMessage("Damage", a);
+                col.transform.SendMessage("Damage", attackDetails);
             }
             if (firstDetected)
             {
